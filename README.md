@@ -6,6 +6,8 @@
 数据接入（JSON/CSV、字段验证、批次指纹）→ 参数化分析（异步 Python worker）→ 结果复核（指标、图形、明细、解释、批准）→ 定时分发（本地收件箱、CSV/JSON、SHA256）；另有业务总览和审计轨迹。
 三个贯穿全栈的实体：Dataset 数据批次、Job 分析任务、Report 分发计划；辅助 User、Audit、Delivery。
 
+抄表结算为独立子系统：累计计数器跨日不清零，按相邻确认读数差生成每日进区/完成人数。实体 MeterDevice/MeterReading/MeterCorrection/SettlementBatch/SettlementLine，后端 `src/services/metering/`（`engine.py` 为无副作用纯函数，`service.py` 负责事务、版本戳与重算），路由前缀 `/meters`，前端"抄表结算"页。更正触发受影响日期整组重算，旧结算置失效但历史行归档保留；重算中或缺日/断档/隔离未解除时，结算闸门拦截新 Job 与新 Report。原手工 Dataset 批次与该子系统互不影响，照常核验。
+
 ## 快速启动
 ```bash
 cp .env.example .env

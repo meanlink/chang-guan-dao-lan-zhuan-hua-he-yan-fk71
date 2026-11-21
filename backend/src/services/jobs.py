@@ -4,7 +4,10 @@ from redis import Redis
 from src.config.settings import REDIS_URL
 from src.models import Dataset, Job
 from src.services.business import metadata
+from src.services.metering.service import ensure_gate_open
 def create(db, data, user):
+    # 抄表结算闸门：重算中或存在缺日/断档/未解除隔离时，拦截新分析
+    ensure_gate_open(db)
     if not db.get(Dataset,data.dataset_id): raise HTTPException(404,'数据批次不存在')
     allowed={p['key']:p for p in metadata().get('parameters',[])}
     if set(data.params)-set(allowed): raise HTTPException(422,'包含未知分析参数')

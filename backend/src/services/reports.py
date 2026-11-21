@@ -2,7 +2,10 @@ import time, os, csv, io, hashlib, json
 from fastapi import HTTPException
 from src.models import Job, Report, Delivery
 from src.config.settings import ARTIFACT_DIR
+from src.services.metering.service import ensure_gate_open
 def create(db, data):
+    # 抄表结算闸门：重算中或存在缺日/断档/未解除隔离时，拦截新简报计划
+    ensure_gate_open(db)
     j=db.get(Job,data.job_id)
     if not j or j.status!='completed' or not j.approved:
         raise HTTPException(409,'请先选择已完成且获批准的分析结果')

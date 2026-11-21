@@ -1,1 +1,1 @@
-export const workspace={meta:null,datasets:[],jobs:[],reports:[],selectedJob:null};
+export const workspace={meta:null,datasets:[],jobs:[],reports:[],selectedJob:null,meterGate:null,meterDevices:[],selectedMeter:null,meterReadings:[],meterSettlement:null,meterBatches:[],meterCorrections:[]};
